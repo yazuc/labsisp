@@ -7,13 +7,21 @@ from datetime import datetime
 
 # --- Alunos devem implementar as funções abaixo --- #
 
+#status
+
 def get_datetime():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def get_uptime():
-    //pegar diretamente de /proc/uptime
+    # pegar diretamente de /proc/uptime
+    # converter pra seconds
+    f = open("/proc/uptime", "r")
+    print(f.read()) 
+
     return 0  # TODO
 
+# /proc/cpuinfo
+# carregar arquivo e formatar para JSOn
 def get_cpu_info():
     return {
         "model": "TODO",
@@ -21,24 +29,27 @@ def get_cpu_info():
         "usage_percent": 0.0
     }
 
+# /proc/meminfo
 def get_memory_info():
     return {
         "total_mb": 0,
         "used_mb": 0
     }
 
+# /proc/version
 def get_os_version():
     return "TODO"
 
+# /proc
 def get_process_list():
     return []  # lista de { "pid": int, "name": str }
-
+# /proc/diskstats
 def get_disks():
     return []  # lista de { "device": str, "size_mb": int }
-
+# /proc/devices
 def get_usb_devices():
     return []  # lista de { "port": str, "description": str }
-
+# /proc/net/ alguma coisa
 def get_network_adapters():
     return []  # lista de { "interface": str, "ip_address": str }
 
