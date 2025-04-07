@@ -108,9 +108,21 @@ def get_disks():
 # /proc/devices
 def get_usb_devices():
     return []  # lista de { "port": str, "description": str }
-# /proc/net/ alguma coisa
+
+# /proc/net/dev alguma coisa
 def get_network_adapters():
-    return []  # lista de { "interface": str, "ip_address": str }
+    adapters = []
+    with open("/proc/net/dev", "r") as f:
+        lines = f.readlines()[2:]  # pula os cabeçalhos
+        for line in lines:
+            iface = line.split(":")[0].strip()
+            #ip = get_ip_address(iface)
+            #if ip:  # só adiciona interfaces com IP
+            adapters.append({
+                "interface": iface
+                #"ip_address": ip
+            })
+    return adapters
 
 # --- Servidor HTTP --- #
 
@@ -142,8 +154,8 @@ class StatusHandler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
 def run_server(port=8080):
-    print(f"Servidor disponível em http://192.168.1.10:{port}/status")
-    server = HTTPServer(("192.168.1.10", port), StatusHandler)
+    print(f"Servidor disponível em http://0.0.0.0:{port}/status")
+    server = HTTPServer(("0.0.0.0", port), StatusHandler)
     server.serve_forever()
 
 if __name__ == "__main__":
