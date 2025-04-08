@@ -109,19 +109,28 @@ def get_disks():
 def get_usb_devices():
     return []  # lista de { "port": str, "description": str }
 
-# /proc/net/dev alguma coisa
+def get_ip_address(iface):
+    os = __builtins__.__import__('os')
+    f = os.popen(f"ip -4 addr show {iface} | grep -oP '(?<=inet\\s)\\d+(\\.\\d+)+(?=/)'")
+    ip = f.read().strip()
+    f.close()
+    return ip if ip else None
+    
+# /proc/net/dev
 def get_network_adapters():
     adapters = []
     with open("/proc/net/dev", "r") as f:
         lines = f.readlines()[2:]  # pula os cabeçalhos
         for line in lines:
-            iface = line.split(":")[0].strip()
-            #ip = get_ip_address(iface)
-            #if ip:  # só adiciona interfaces com IP
-            adapters.append({
-                "interface": iface
-                #"ip_address": ip
-            })
+            parts = line.split(":")
+            iface = parts[0].strip()
+            data = parts[1].split()
+            ip = get_ip_address(iface)
+            if ip:
+                adapters.append({
+                    "interface": iface,
+                    "ip_address": ip,
+                })
     return adapters
 
 # --- Servidor HTTP --- #
